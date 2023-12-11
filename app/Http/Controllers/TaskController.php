@@ -8,6 +8,7 @@ use App\Services\TaskService;
 use App\Http\Requests\TaskRequest;
 use App\DTO\TaskDTO;
 use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
 
 /**
  * @OA\Tag(
@@ -61,7 +62,7 @@ class TaskController extends Controller
      *     )
      * )
      */
-    public function index(Request $request)
+    public function index(Request $request): JsonResponse
     {
         $tasks = $this->taskService->getTasks($request->all());
 
@@ -91,7 +92,7 @@ class TaskController extends Controller
      *     )
      * )
      */
-    public function show($id)
+    public function show(int $id) : JsonResponse
     {
         $task = $this->taskService->getTaskById($id);
 
@@ -121,7 +122,7 @@ class TaskController extends Controller
      *     )
      * )
      */
-    public function store(TaskRequest $request)
+    public function store(TaskRequest $request): JsonResponse
     {
         $taskDTO = TaskDTO::fromArray($request->validated());
         $task = $this->taskService->createTask($taskDTO);
@@ -162,7 +163,7 @@ class TaskController extends Controller
      *     )
      * )
      */
-    public function update(TaskRequest $request, $id)
+    public function update(TaskRequest $request, int $id): JsonResponse
     {
         $taskDTO = TaskDTO::fromArray($request->validated());
         $task = $this->taskService->updateTask($id, $taskDTO);
@@ -192,7 +193,7 @@ class TaskController extends Controller
      *     )
      * )
      */
-    public function destroy($id)
+    public function destroy(int $id): JsonResponse
     {
         // Implement logic to delete a task
         $this->taskService->deleteTask($id);
@@ -223,7 +224,7 @@ class TaskController extends Controller
      *     )
      * )
      */
-    public function markAsDone($id)
+    public function markAsDone(int $id): JsonResponse
     {
         $this->taskService->markTaskAsDone($id);
 

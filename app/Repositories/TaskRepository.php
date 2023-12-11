@@ -6,10 +6,11 @@ namespace App\Repositories;
 
 use App\DTO\TaskDTO;
 use App\Models\Task;
+use Illuminate\Database\Eloquent\Collection;
 
 class TaskRepository
 {
-    public function getTasks(array $filters)
+    public function getTasks(array $filters): Collection
     {
         $query = Task::query();
 
@@ -40,17 +41,21 @@ class TaskRepository
         return $query->get();
     }
 
-    public function getTaskById($id)
+    public function getTaskById(int $id): TaskDTO
     {
-        return Task::findOrFail($id);
+        $taskModel = Task::findOrFail($id);
+
+        return TaskDTO::fromArray($taskModel->toArray());
     }
 
-    public function createTask(array $data)
+    public function createTask(array $data): TaskDTO
     {
-        return Task::create($data);
+        $createdTask = Task::create($data);
+
+        return TaskDTO::fromArray($createdTask->toArray());
     }
 
-    public function updateTask(TaskDTO $taskDTO, array $data)
+    public function updateTask(TaskDTO $taskDTO, array $data): TaskDTO
     {
         $task = Task::find($taskDTO->getId());
 
@@ -60,10 +65,11 @@ class TaskRepository
 
         $task->update($data);
 
-        return $task->fresh();
+        // Перетворення моделі на DTO
+        return TaskDTO::fromArray($task->fresh()->toArray());
     }
 
-    public function deleteTask(TaskDTO $taskDTO)
+    public function deleteTask(TaskDTO $taskDTO): void
     {
         $task = Task::find($taskDTO->getId());
 
@@ -74,7 +80,7 @@ class TaskRepository
         $task->delete();
     }
 
-    public function markTaskAsDone(TaskDTO $taskDTO)
+    public function markTaskAsDone(TaskDTO $taskDTO): Task
     {
         $task = Task::find($taskDTO->getId());
 
